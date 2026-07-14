@@ -1,0 +1,65 @@
+{
+  "serial": {
+    "mode": "physical",
+    "port": "COM27",
+    "baudrate": 115200,
+    "bytesize": 8,
+    "parity": "N",
+    "stopbits": 1
+  },
+  "emulator": {
+    "vid": "FFFF",
+    "pid": "0001",
+    "port": "VIRTUAL-COM1",
+    "baudrate": 115200,
+    "bytesize": 8,
+    "parity": "N",
+    "stopbits": 1
+  },
+  "display": {
+    "echo": false,
+    "millis": false,
+    "autoscroll": false,
+    "raw": true,
+    "saveReception": false
+  },
+  "filters": [
+    {
+      "enabled": true,
+      "compare": "startsWith",
+      "text": "",
+      "operation": "show"
+    }
+  ],
+  "buttons": [
+    {
+      "name": "STATUS",
+      "value": "STATUS?",
+      "color": "#ed5b20"
+    },
+    {
+      "name": "START",
+      "value": "START",
+      "color": "#4e8c67"
+    },
+    {
+      "name": "STOP",
+      "value": "STOP",
+      "color": "#ba3b36"
+    }
+  ],
+  "colors": [
+    {
+      "keyword": "ERROR",
+      "color": "#ff5a4f"
+    },
+    {
+      "keyword": "OK",
+      "color": "#54c47c"
+    },
+    {
+      "keyword": "WARNING",
+      "color": "#e4a83a"
+    }
+  ]
+}

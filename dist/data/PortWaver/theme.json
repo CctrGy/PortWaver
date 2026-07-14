@@ -1,0 +1,28 @@
+{
+  "name": "Industrial Paper",
+  "window_resizable": true,
+  "window_size": "1440x810",
+  "colors": {
+    "paper": "#e6e5df",
+    "paper_secondary": "#cdcec9",
+    "ink": "#272a2d",
+    "muted": "#777a79",
+    "line": "#a2a39f",
+    "accent": "#ed5b20",
+    "dark": "#32363a",
+    "success": "#4e8c67",
+    "danger": "#ba3b36",
+    "terminal_background": "#222629",
+    "terminal_text": "#d9ddd9"
+  },
+  "layout": {
+    "titlebar_height": 46,
+    "rail_width": 88,
+    "panel_radius": 0,
+    "grid_size": 40
+  },
+  "typography": {
+    "family": "Consolas, Courier New, monospace",
+    "base_size": 12
+  }
+}

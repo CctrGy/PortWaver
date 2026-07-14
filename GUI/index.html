@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PortWaver Serial Terminal</title>
+  <link rel="icon" type="image/png" href="../icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="layout.css">
+</head>
+<body>
+<div class="app-shell">
+  <header class="titlebar pywebview-drag-region">
+    <div class="brand-lockup"><span class="brand-glyph"></span><b>PORTWAVER</b><em>SERIAL UNIT</em></div>
+    <div class="title-readout"><span id="top-status">SYS:STANDBY</span><i id="status-light"></i><span id="top-port">NO PORT</span></div>
+    <div class="window-controls">
+      <button data-window="minimize" title="Minimize">-</button>
+      <button data-window="maximize" title="Maximize">□</button>
+      <button class="close" data-window="close" title="Close">×</button>
+    </div>
+  </header>
+
+  <aside class="rail">
+    <div class="rail-index">01-05</div>
+    <nav>
+      <button class="nav-item" data-view="overview"><span>01</span><b>OVERVIEW</b></button>
+      <button class="nav-item" data-view="options"><span>02</span><b>OPTIONS</b></button>
+      <button class="nav-item active" data-view="config"><span>03</span><b>CONFIG</b></button>
+      <button class="nav-item" data-view="settings"><span>05</span><b>SETTINGS</b></button>
+    </nav>
+    <div class="rail-footer"><span>V.01.00</span><b id="rail-state">READY</b></div>
+  </aside>
+
+  <main>
+    <section class="view" id="view-overview">
+      <header class="page-head">
+        <div><p>TACTICAL SERIAL MONITOR / 01</p><h1>OVERVIEW</h1></div>
+        <div class="connection-readout"><span>CONNECTION TIME</span><b id="connection-time">00:00:00.000</b></div>
+      </header>
+      <div class="overview-grid">
+        <article class="terminal panel">
+          <header class="terminal-header"><div><span>01 / RX STREAM</span><h2 data-i18n="reception">DATA RECEPTION</h2></div><div class="transport-controls"><select id="text-encoding" title="Character encoding"><option value="utf-8">UTF-8</option><option value="ascii">ASCII</option></select><select id="line-ending" title="Transmit line ending"><option value="none">NONE</option><option value="lf" selected>LF</option><option value="cr">CR</option><option value="crlf">CR+LF</option></select><select id="rx-conversion" title="Receive line conversion"><option value="none">NO CONVERSION</option><option value="lf_to_crlf">LF &gt; CRLF</option><option value="cr_to_crlf">CR &gt; CRLF</option></select></div><div class="terminal-actions"><button id="pause-rx" data-i18n="pause">PAUSE</button><button id="clear-rx" data-i18n="clear">CLEAR</button></div></header>
+          <div id="rx-output" class="rx-output"><div class="empty-state"><span data-i18n="waiting_connection">WAITING FOR SERIAL CONNECTION</span><span data-i18n="configure_port">Configure the port in CONFIG</span></div></div>
+          <footer class="tx-bar">
+            <span class="prompt">TX&gt;</span>
+            <input id="tx-input" autocomplete="off" placeholder="Enter a String to send..." data-i18n-placeholder="send_placeholder">
+            <button class="file-send-button" id="open-txt-file" title="Send text file line by line">FILE</button>
+            <button id="send-btn"><span data-i18n="send">SEND</span> <b>→</b></button>
+          </footer>
+        </article>
+        <aside class="quick-panel panel">
+          <header><div><span>02 / COMMANDS</span><h2 data-i18n="quick_buttons">QUICK BUTTONS</h2></div><b id="button-count">00</b></header>
+          <div id="quick-buttons" class="quick-buttons"></div>
+          <footer data-i18n="edit_options">EDIT IN OPTIONS</footer>
+        </aside>
+      </div>
+      <section class="signal-strip panel">
+        <div class="signal-title"><span>03 / MODEM CONTROL</span><b>LIVE SIGNALS</b></div>
+        <label class="signal-output"><span>RTS</span><input type="checkbox" id="live-rts"><i></i></label>
+        <label class="signal-output"><span>DTR</span><input type="checkbox" id="live-dtr"><i></i></label>
+        <button id="send-break">BREAK</button>
+        <div class="signal-input"><span>CTS</span><i id="live-cts"></i></div>
+        <div class="signal-input"><span>DSR</span><i id="live-dsr"></i></div>
+        <div class="signal-input"><span>DCD</span><i id="live-dcd"></i></div>
+        <div class="signal-input"><span>RI</span><i id="live-ri"></i></div>
+      </section>
+    </section>
+
+    <section class="view" id="view-options">
+      <header class="page-head"><div><p>DATA PROCESSING / 02</p><h1>OPTIONS</h1></div><button class="primary" id="save-options" data-i18n="save_changes">SAVE CHANGES</button></header>
+      <div class="options-workspace">
+        <nav class="option-tabs" aria-label="Options sections">
+          <button class="option-tab active" data-option-view="buttons"><span>01</span><b>BUTTONS</b></button>
+          <button class="option-tab" data-option-view="colors"><span>02</span><b>KEYWORD COLORS</b></button>
+          <button class="option-tab" data-option-view="filters"><span>03</span><b>RECEPTION FILTERS</b></button>
+        </nav>
+        <article class="panel editor-panel option-pane active" id="option-buttons">
+          <header><div><span>01 / COMMAND STACK</span><h2 data-i18n="configurable_buttons">CONFIGURABLE BUTTONS</h2></div><button class="add-btn" id="add-button" data-i18n="new">+ NEW</button></header>
+          <p class="panel-note" data-i18n="button_help">ASSIGN A NAME, STRING, COLOR AND OPTIONAL NUMPAD SHORTCUT.</p>
+          <div class="table-head button-cols"><span data-i18n="name">NAME</span><span data-i18n="string">STRING</span><span data-i18n="color">COLOR</span><span>NUMPAD</span><span></span></div>
+          <div id="button-list" class="rows"></div>
+        </article>
+        <article class="panel editor-panel option-pane" id="option-colors">
+          <header><div><span>02 / COLOR RULES</span><h2 data-i18n="keyword_colors">KEYWORD COLORS</h2></div><button class="add-btn" id="add-color" data-i18n="new">+ NEW</button></header>
+          <p class="panel-note">HIGHLIGHT TEXT, DATE/TIME FORMATS OR CONTENT BETWEEN DELIMITERS.</p>
+          <div class="table-head color-cols"><span>IDENTIFIER</span><span data-i18n="text_receive">TEXT / PATTERN</span><span data-i18n="color">COLOR</span><span></span></div>
+          <div id="color-list" class="rows"></div>
+        </article>
+        <article class="panel editor-panel option-pane" id="option-filters">
+          <header><div><span>03 / FILTER MATRIX</span><h2 data-i18n="reception_filters">RECEPTION FILTERS</h2></div><button class="add-btn" id="add-filter" data-i18n="new">+ NEW</button></header>
+          <p class="panel-note">MATCH RECEIVED LINES, CONTROL THEIR OUTPUT OR SEND AN AUTOMATIC RESPONSE.</p>
+          <div class="table-head filter-cols"><span data-i18n="state">STATE</span><span data-i18n="compare">COMPARE</span><span data-i18n="text_receive">TEXT RECEIVE</span><span data-i18n="operation">OPERATION</span><span data-i18n="text_out">TEXT OUT</span><span></span></div>
+          <div id="filter-list" class="rows"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="view active" id="view-config">
+      <header class="page-head"><div><p>SERIAL LINK CONTROL / 03</p><h1>CONFIG</h1></div><div class="connection-badge" id="connection-badge"><i></i><span><small data-i18n="port_state">PORT STATE</small><b data-i18n="disconnected">DISCONNECTED</b></span></div></header>
+      <div class="config-grid">
+        <article class="panel config-panel connection-panel">
+          <header class="connection-tabs">
+            <button class="connection-tab active" data-connection-view="physical"><span>01 / CONNECTION</span><b data-i18n="serial_port">SERIAL PORT</b></button>
+            <button class="connection-tab" data-connection-view="emulate"><span>01 / EMULATE</span><b data-i18n="emulated_port">EMULATED PORT</b></button>
+            <button class="icon-btn" id="refresh-ports" title="Refresh ports">↻</button>
+          </header>
+          <div class="connection-pane active" id="connection-physical">
+            <label class="mode-check"><span><b data-i18n="enable_connection">ENABLE PHYSICAL CONNECTION</b><small data-i18n="enable_connection_help">USE AN EXISTING SERIAL PORT</small></span><input id="use-physical" type="checkbox" checked><i></i></label>
+            <div class="form-grid">
+              <label class="wide"><span>PORT</span><select id="serial-port"><option value="">SEARCHING PORTS...</option></select></label>
+              <label><span>BAUDRATE</span><select id="baudrate"><option>9600</option><option>19200</option><option>38400</option><option>57600</option><option selected>115200</option><option>230400</option><option>460800</option><option>921600</option></select></label>
+              <label><span>DATA BITS</span><select id="bytesize"><option>7</option><option selected>8</option></select></label>
+              <label><span>PARITY</span><select id="parity"><option value="N">NONE</option><option value="E">EVEN</option><option value="O">ODD</option></select></label>
+              <label><span>STOP BITS</span><select id="stopbits"><option selected>1</option><option>1.5</option><option>2</option></select></label>
+              <label class="wide"><span>FLOW CONTROL</span><select id="flow-control"><option value="none">NONE</option><option value="xonxoff">XON/XOFF</option><option value="rtscts">RTS/CTS</option><option value="dsrdtr">DSR/DTR</option></select></label>
+            </div>
+          </div>
+          <div class="connection-pane" id="connection-emulate">
+            <label class="mode-check"><span><b data-i18n="enable_emulation">ENABLE SERIAL EMULATION</b><small data-i18n="enable_emulation_help">USE AN INTERNAL LOOPBACK PORT</small></span><input id="use-emulator" type="checkbox"><i></i></label>
+            <div class="form-grid emulator-grid">
+              <label><span>VID</span><input id="emulator-vid" value="FFFF" maxlength="4"></label>
+              <label><span>PID</span><input id="emulator-pid" value="0001" maxlength="4"></label>
+              <label class="wide"><span>PORT</span><input id="emulator-port" value="VIRTUAL-COM1"></label>
+              <label><span>BAUDRATE</span><select id="emulator-baudrate"><option>9600</option><option>57600</option><option selected>115200</option><option>230400</option><option>921600</option></select></label>
+              <label><span>DATA BITS</span><select id="emulator-bytesize"><option>7</option><option selected>8</option></select></label>
+              <label><span>PARITY</span><select id="emulator-parity"><option value="N">NONE</option><option value="E">EVEN</option><option value="O">ODD</option></select></label>
+              <label><span>STOP BITS</span><select id="emulator-stopbits"><option selected>1</option><option>1.5</option><option>2</option></select></label>
+              <label class="wide"><span>FLOW CONTROL</span><select id="emulator-flow-control"><option value="none">NONE</option><option value="xonxoff">XON/XOFF</option><option value="rtscts">RTS/CTS</option><option value="dsrdtr">DSR/DTR</option></select></label>
+            </div>
+            <div class="emulator-signals">
+              <label><span>RTS</span><input id="emulator-rts" type="checkbox" checked></label><label><span>DTR</span><input id="emulator-dtr" type="checkbox" checked></label>
+              <label><span>CTS</span><input id="emulator-cts" type="checkbox"></label><label><span>DSR</span><input id="emulator-dsr" type="checkbox"></label><label><span>DCD</span><input id="emulator-dcd" type="checkbox"></label><label><span>RI</span><input id="emulator-ri" type="checkbox"></label>
+              <button id="config-break" type="button">SEND BREAK</button>
+            </div>
+          </div>
+          <div class="connect-actions"><button class="primary" id="connect-btn" data-i18n="connect">CONNECT</button><button id="disconnect-btn" disabled data-i18n="disconnect">DISCONNECT</button></div>
+        </article>
+        <article class="panel config-panel">
+          <header><div><span>02 / DISPLAY</span><h2 data-i18n="visualization">VISUALIZATION</h2></div></header>
+          <div class="switch-list">
+            <label class="switch-row"><span><b data-i18n="local_echo">LOCAL ECHO</b><small data-i18n="echo_help">SHOW SENT DATA IN THE RECEPTION STREAM</small></span><input id="echo" type="checkbox" checked><i></i></label>
+            <label class="switch-row"><span><b>MILLIS</b><small data-i18n="millis_help">TIME SINCE THE CONNECTION STARTED</small></span><input id="millis" type="checkbox" checked><i></i></label>
+            <label class="switch-row"><span><b>AUTO SCROLL</b><small data-i18n="autoscroll_help">KEEP THE LATEST MESSAGE VISIBLE</small></span><input id="autoscroll" type="checkbox" checked><i></i></label>
+            <label class="switch-row"><span><b>RAW</b><small data-i18n="raw_help">SHOW JSON EXACTLY AS RECEIVED</small></span><input id="raw" type="checkbox" checked><i></i></label>
+            <div class="switch-row logging-row"><button class="switch-copy" id="open-log-config"><b data-i18n="save_reception">SAVE RECEPTION TO TXT</b><small id="log-path" data-i18n="save_reception_help">WRITE RECEIVED LINES TO A TIMESTAMPED FILE</small></button><label class="switch-control" title="Enable reception logging"><input id="save-reception" type="checkbox"><i></i></label></div>
+          </div>
+          <button class="save-config" id="save-config"><span data-i18n="save_config">SAVE CONFIGURATION</span> <b>→</b></button>
+        </article>
+        <article class="panel color-preview">
+          <header><div><span>03 / COLOR MAP</span><h2 data-i18n="color_assignment">COLOR ASSIGNMENT</h2></div><button class="text-btn" data-goto="options" data-option-target="colors"><span data-i18n="edit_rules">EDIT RULES</span> &gt;</button></header>
+          <div id="color-preview-list"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="view" id="view-settings">
+      <header class="page-head"><div><p>SESSION MANAGEMENT / 05</p><h1>SETTINGS</h1></div><button class="primary" id="save-shortcuts">SAVE KEY MAP</button></header>
+      <div class="profiles-grid">
+        <article class="panel profile-manager">
+          <header><div><span>01 / USER VSP</span><h2>CONFIGURATION PROFILES</h2></div><b>.UserVSP</b></header>
+          <div class="profile-create"><input id="profile-name" placeholder="Profile name"><button id="create-profile">SAVE CURRENT</button></div>
+          <div id="profile-list" class="profile-list"></div>
+        </article>
+        <article class="panel shortcut-manager">
+          <header><div><span>02 / KEY MAP</span><h2>FUNCTION KEY ACTIONS</h2></div><b>F1-F12</b></header>
+          <div id="shortcut-list" class="shortcut-list"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+  <div id="toast" role="status"></div>
+  <div class="modal-backdrop" id="log-modal" aria-hidden="true">
+    <section class="internal-modal" role="dialog" aria-modal="true" aria-labelledby="log-modal-title">
+      <header><div><span>LOG / CONFIGURATION</span><h2 id="log-modal-title" data-i18n="log_configuration">RECEPTION FILE</h2></div><button id="close-log-modal" title="Close">×</button></header>
+      <div class="modal-body">
+        <label><span data-i18n="log_directory">DIRECTORY</span><input id="log-directory" autocomplete="off"></label>
+        <label><span data-i18n="log_filename">FILE NAME</span><input id="log-filename" value="serial_{date}_{time}.txt" autocomplete="off"></label>
+        <p data-i18n="log_tokens">AVAILABLE TOKENS: {date} AND {time}</p>
+      </div>
+      <footer><button id="cancel-log-config" data-i18n="cancel">CANCEL</button><button class="primary" id="save-log-config" data-i18n="apply">APPLY</button></footer>
+    </section>
+  </div>
+  <div class="modal-backdrop" id="file-modal" aria-hidden="true">
+    <section class="internal-modal file-modal" role="dialog" aria-modal="true">
+      <header><div><span>TX / FILE SEQUENCE</span><h2>SEND TEXT FILE</h2></div><button id="close-file-modal" title="Close">&times;</button></header>
+      <div class="modal-body">
+        <label><span>FILE</span><input id="sequence-file-path" readonly></label>
+        <div class="sequence-summary"><span><b id="sequence-lines">0</b> LINES</span><label><span>DELAY BETWEEN LINES (MS)</span><input id="sequence-delay" type="number" min="0" max="60000" value="50"></label></div>
+        <div class="sequence-progress"><i id="sequence-progress-bar"></i></div><p id="sequence-status">READY</p>
+      </div>
+      <footer><button id="cancel-sequence">CANCEL</button><button class="primary" id="start-sequence">START SEND</button></footer>
+    </section>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
